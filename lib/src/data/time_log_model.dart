@@ -52,7 +52,7 @@ class TimeLog {
   Project get project {
     ProjectTable table = ProjectTable.getTable();
 
-    return table.getProjectById(activity.getProjectId());
+    return table.getProjectById(activity.projectId);
   }
 
   Activity get activity {

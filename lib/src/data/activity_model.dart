@@ -29,19 +29,19 @@ class Activity {
         "project_id": _projectId
       };
 
-  String getName() {
+  String get name {
     return _name;
   }
 
-  Duration getTotalTime() {
+  Duration get totalTime {
     return _totalTime;
   }
 
-  int getProjectId() {
+  int get projectId {
     return _projectId;
   }
 
-  int getId() {
+  int get id {
     return _id;
   }
 

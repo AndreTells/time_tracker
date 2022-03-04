@@ -17,7 +17,7 @@ class HomeState {
     if (selectedActivity == null) {
       return 'Select an Activity';
     } else {
-      return selectedActivity!.getName();
+      return selectedActivity!.name;
     }
   }
 

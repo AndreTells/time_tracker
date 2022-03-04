@@ -17,7 +17,7 @@ class TimeLogListPage extends StatelessWidget {
         const SizedBox(
           width: 13,
         ),
-        Text(log.activity.getName()),
+        Text(log.activity.name),
         const Spacer(),
         Text(log.time.toString())
       ],

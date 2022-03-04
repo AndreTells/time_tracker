@@ -35,7 +35,7 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
       child: Row(
         children: [
           Text(
-            activity.getName(),
+            activity.name,
             style: Theme.of(context).textTheme.headline4,
           ),
         ],
