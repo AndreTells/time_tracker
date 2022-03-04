@@ -10,16 +10,16 @@ class TimeLogListPage extends StatelessWidget {
           width: 15.0,
           height: 15.0,
           decoration: BoxDecoration(
-            color: log.getProject().getColor(),
+            color: log.project.getColor(),
             shape: BoxShape.circle,
           ),
         ),
         const SizedBox(
           width: 13,
         ),
-        Text(log.getActivity().getName()),
+        Text(log.activity.getName()),
         const Spacer(),
-        Text(log.getTime().toString())
+        Text(log.time.toString())
       ],
     );
   }

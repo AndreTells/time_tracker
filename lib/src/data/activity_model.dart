@@ -4,9 +4,9 @@
 class Activity {
   final int _id;
   String _name;
-  Duration _totalTime;
+  Duration _totalTime; //stored as seconds
   int _projectId;
-  Activity._(
+  Activity(
       {required int id,
       required String name,
       required Duration totalTime,
@@ -15,6 +15,19 @@ class Activity {
         _name = name,
         _totalTime = totalTime,
         _projectId = projectId;
+
+  factory Activity.fromMap(Map<String, dynamic> map) => Activity(
+      id: map["id"],
+      name: map["name"],
+      totalTime: Duration(seconds: map["total_time"]),
+      projectId: map["project_id"]);
+
+  Map<String, dynamic> toMap() => {
+        "id": _id,
+        "name": _name,
+        "total_time": _totalTime.inSeconds,
+        "project_id": _projectId
+      };
 
   String getName() {
     return _name;
@@ -60,7 +73,7 @@ class ActivityTable {
   }
 
   void addActivity(String name, int projectId) {
-    Activity newActivity = Activity._(
+    Activity newActivity = Activity(
         id: _nextId,
         name: name,
         totalTime: Duration.zero,

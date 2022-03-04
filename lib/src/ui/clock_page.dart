@@ -25,7 +25,7 @@ class ClockPage extends StatelessWidget {
                 TimeLogTable table = TimeLogTable.getTable();
                 DateTime end = DateTime.now();
                 DateTime start = end.add(watch.elapsed * (-1));
-                table.addTimeLog(start, end, project.getId(), activity.getId());
+                table.addTimeLog(start, end, activity.getId());
 
                 Navigator.pop(context);
               },

@@ -6,10 +6,16 @@ class Project {
   String _name;
   Color _color;
   //has many activities
-  Project._({required int id, required String name, required Color color})
+  Project({required int id, required String name, required Color color})
       : _id = id,
         _name = name,
         _color = color;
+
+  factory Project.fromMap(Map<String, dynamic> map) => Project(
+      id: map["id"], name: map["name"], color: Color(int.parse(map["color"])));
+
+  Map<String, dynamic> toMap() =>
+      {"id": _id, "name": _name, "color": _color.toString()};
 
   String getName() {
     return _name;
@@ -47,7 +53,7 @@ class ProjectTable {
   }
 
   void addProject(String name, Color color) {
-    Project newProject = Project._(id: _nextId, name: name, color: color);
+    Project newProject = Project(id: _nextId, name: name, color: color);
     _projects.add(newProject);
     _nextId++;
   }

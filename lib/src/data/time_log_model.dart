@@ -8,43 +8,54 @@ import 'package:time_tracker/src/data/project_model.dart';
 
 class TimeLog {
   final int _id;
-  DateTime _start; //00:00:00
-  DateTime _end;
-  Duration _time;
-  int _projectId;
+  DateTime _start; //stored as milliseconds since epoch
+  DateTime _end; //stored as milliseconds since epoch
+  Duration _time; //stored as seconds
   int _activityId;
 
-  TimeLog._(
+  TimeLog(
       {required int id,
       required DateTime start,
       required DateTime end,
-      required int projectId,
       required int activityId})
       : _id = id,
         _start = start,
         _end = end,
         _time = end.difference(start),
-        _projectId = projectId,
         _activityId = activityId;
 
-  Duration getTime() {
+  factory TimeLog.fromMap(Map<String, dynamic> map) => TimeLog(
+      id: map["id"],
+      start: DateTime.fromMillisecondsSinceEpoch(map["start"]),
+      end: DateTime.fromMillisecondsSinceEpoch(map["end"]),
+      activityId: map["activity_id"]);
+
+  Map<String, dynamic> toMap() => {
+        "id": _id,
+        "start": _start.millisecondsSinceEpoch,
+        "end": _end.millisecondsSinceEpoch,
+        "activity_id": _activityId
+      };
+
+  Duration get time {
     return _time;
   }
 
-  DateTime getStart() {
+  DateTime get start {
     return _start;
   }
 
-  DateTime getEnd() {
+  DateTime get end {
     return _end;
   }
 
-  Project getProject() {
+  Project get project {
     ProjectTable table = ProjectTable.getTable();
-    return table.getProjectById(_projectId);
+
+    return table.getProjectById(activity.getProjectId());
   }
 
-  Activity getActivity() {
+  Activity get activity {
     ActivityTable table = ActivityTable.getTable();
     return table.getActivityById(_activityId);
   }
@@ -60,13 +71,9 @@ class TimeLogTable {
     return _table;
   }
 
-  void addTimeLog(DateTime start, DateTime end, int projectId, int activtiyId) {
-    TimeLog newTimeLog = TimeLog._(
-        id: _nextId,
-        start: start,
-        end: end,
-        projectId: projectId,
-        activityId: activtiyId);
+  void addTimeLog(DateTime start, DateTime end, int activtiyId) {
+    TimeLog newTimeLog =
+        TimeLog(id: _nextId, start: start, end: end, activityId: activtiyId);
     _timeLogs.add(newTimeLog);
     _nextId++;
   }
@@ -81,8 +88,7 @@ class TimeLogTable {
         .toList();
   }
 
-  void ediTimeLog(
-      int id, DateTime start, DateTime end, int projectId, int activityId) {
+  void ediTimeLog(int id, DateTime start, DateTime end, int activityId) {
     TimeLog selectedTimeLog = _timeLogs[id];
     ActivityTable activities = ActivityTable.getTable();
     Activity currentActivity =
@@ -92,7 +98,6 @@ class TimeLogTable {
     selectedTimeLog._start = start;
     selectedTimeLog._end = end;
     selectedTimeLog._time = end.difference(start);
-    selectedTimeLog._projectId = projectId;
     selectedTimeLog._activityId = activityId;
 
     Activity newActivity =
