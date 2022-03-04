@@ -17,15 +17,15 @@ class Project {
   Map<String, dynamic> toMap() =>
       {"id": _id, "name": _name, "color": _color.toString()};
 
-  String getName() {
+  String get name {
     return _name;
   }
 
-  Color getColor() {
+  Color get color {
     return _color;
   }
 
-  int getId() {
+  int get id {
     return _id;
   }
 

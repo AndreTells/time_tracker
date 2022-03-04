@@ -122,8 +122,8 @@ class HomePage extends StatelessWidget {
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>
                                         ActivitySelectorPage(
-                                            projectId: state.selectedProject!
-                                                .getId())));
+                                            projectId:
+                                                state.selectedProject!.id)));
 
                             BlocProvider.of<HomeBloc>(context)
                                 .add(SetActivity(activity: activity));

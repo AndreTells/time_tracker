@@ -10,7 +10,7 @@ class TimeLogListPage extends StatelessWidget {
           width: 15.0,
           height: 15.0,
           decoration: BoxDecoration(
-            color: log.project.getColor(),
+            color: log.project.color,
             shape: BoxShape.circle,
           ),
         ),

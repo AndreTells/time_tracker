@@ -9,7 +9,7 @@ class HomeState {
     if (selectedProject == null) {
       return 'Select a Project';
     } else {
-      return selectedProject!.getName();
+      return selectedProject!.name;
     }
   }
 

@@ -13,7 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       if (state.selectedProject == null) {
         yield HomeState(selectedProject: event.project, selectedActivity: null);
       }
-      if (state.selectedProject!.getId() == event.project.getId()) {
+      if (state.selectedProject!.id == event.project.id) {
         yield HomeState(
             selectedProject: state.selectedProject,
             selectedActivity: state.selectedActivity);

@@ -38,7 +38,7 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
           width: 15.0,
           height: 15.0,
           decoration: BoxDecoration(
-            color: project.getColor(),
+            color: project.color,
             shape: BoxShape.circle,
           ),
         ),
@@ -50,7 +50,7 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
             Navigator.pop(context, project);
           },
           child: Text(
-            project.getName(),
+            project.name,
             style: Theme.of(context).textTheme.headline4,
           ),
         ),
