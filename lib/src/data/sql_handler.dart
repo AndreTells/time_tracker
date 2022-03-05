@@ -178,7 +178,7 @@ class DBProvider {
     final db = await database;
     if (useLargestId) {
       var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM  Time_Log");
-      int id = table.first["id"] as int;
+      int id = table.first["id"] == null ? 0 : table.first["id"] as int;
       timeLog.id = id;
       var res = await db.insert("Time_Log", timeLog.toMap());
       return res;

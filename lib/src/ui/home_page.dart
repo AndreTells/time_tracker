@@ -43,7 +43,6 @@ class HomePage extends StatelessWidget {
                           context,
                           PageRouteBuilder(
                               pageBuilder: (_, __, ___) => ClockPage(
-                                  project: state.selectedProject!,
                                   activity: state.selectedActivity!)));
                     } on HomeExceptions catch (e) {
                       CustomAlertNotification.createNotification(
@@ -147,11 +146,8 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
-          /*Navigator.push(
-              context,
-              PageRouteBuilder(
-                  pageBuilder: (_, __, ___) => const TimeLogListPage()))
-        */
+          Navigator.push(context,
+              PageRouteBuilder(pageBuilder: (_, __, ___) => TimeLogListPage()))
         },
         child: const Icon(Icons.format_list_bulleted),
       ),

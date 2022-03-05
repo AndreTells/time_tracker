@@ -2,15 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:time_tracker/src/data/activity_model.dart';
-import 'package:time_tracker/src/data/project_model.dart';
+import 'package:time_tracker/src/data/sql_handler.dart';
 import 'package:time_tracker/src/data/time_log_model.dart';
 
 class ClockPage extends StatelessWidget {
-  final Project project;
   final Activity activity;
   final Stopwatch watch = Stopwatch();
-  ClockPage({Key? key, required this.project, required this.activity})
-      : super(key: key) {
+  ClockPage({Key? key, required this.activity}) : super(key: key) {
     watch.start();
   }
 
@@ -22,10 +20,10 @@ class ClockPage extends StatelessWidget {
           child: TextButton(
               onPressed: () {
                 watch.stop();
-                TimeLogTable table = TimeLogTable.getTable();
                 DateTime end = DateTime.now();
                 DateTime start = end.add(watch.elapsed * (-1));
-                table.addTimeLog(start, end, activity.id);
+                DBProvider.db.newTimeLog(TimeLog(
+                    id: 0, start: start, end: end, activityId: activity.id));
 
                 Navigator.pop(context);
               },
