@@ -98,6 +98,10 @@ class DBProvider {
   //DELETE
   Future<void> deleteProject(int id) async {
     final db = await database;
+    List<Activity> activities = await getActivitiesFromProject(id);
+    for (Activity a in activities) {
+      deleteActivity(a.id);
+    }
     db.delete("Project", where: "id = ?", whereArgs: [id]);
   }
 
@@ -114,7 +118,7 @@ class DBProvider {
     final db = await database;
     if (useLargestId) {
       var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM  Activity");
-      int id = table.first["id"] as int;
+      int id = table.first["id"] == null ? 0 : table.first["id"] as int;
       activity.id = id;
       var res = await db.insert("Activity", activity.toMap());
       return res;
@@ -161,6 +165,10 @@ class DBProvider {
   //DELETE
   Future<void> deleteActivity(int id) async {
     final db = await database;
+    List<TimeLog> timeLogs = await getTimeLogsFromActivity(id);
+    for (TimeLog t in timeLogs) {
+      deleteActivity(t.id);
+    }
     db.delete("Activity", where: "id = ?", whereArgs: [id]);
   }
 
