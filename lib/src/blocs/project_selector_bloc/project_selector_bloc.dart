@@ -8,7 +8,7 @@ part 'project_selector_state.dart';
 class ProjectSelectorBloc
     extends Bloc<ProjectSelectorEvent, ProjectSelectorState> {
   ProjectSelectorBloc() : super(ProjectSelectorState()) {
-    syncProjectsWithDB();
+    syncWithDB();
   }
 
   @override
@@ -17,14 +17,17 @@ class ProjectSelectorBloc
     if (event is NewItem) {
       await DBProvider.db
           .newProject(Project(id: 0, name: event.name, color: event.color));
-      syncProjectsWithDB();
+      syncWithDB();
       yield ProjectSelectorState(projects: state.projects);
+    } else if (event is DeleteItem) {
+      await DBProvider.db.deleteProject(event.id);
+      syncWithDB();
     } else if (event is SyncToDB) {
       yield ProjectSelectorState(projects: event.projects);
     }
   }
 
-  void syncProjectsWithDB() async {
+  void syncWithDB() async {
     List<Project> projects = await DBProvider.db.getAllProjects();
     add(SyncToDB(projects: projects));
   }

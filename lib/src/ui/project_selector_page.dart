@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/project_selector_bloc/project_selector_bloc.dart';
 import 'package:time_tracker/src/data/project_model.dart';
-import 'package:time_tracker/src/data/sql_handler.dart';
 
 class ProjectSelectorPage extends StatelessWidget {
   const ProjectSelectorPage({Key? key}) : super(key: key);
@@ -33,31 +32,43 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
 
   //change to receive project as parameter later
   Widget itemTemplate(BuildContext context, Project project) {
-    return Row(
-      children: [
-        Container(
-          width: 15.0,
-          height: 15.0,
-          decoration: BoxDecoration(
-            color: project.color,
-            shape: BoxShape.circle,
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
+      onDismissed: (DismissDirection direction) {
+        BlocProvider.of<ProjectSelectorBloc>(context)
+            .add(DeleteItem(id: project.id));
+      },
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 8.0,
           ),
-        ),
-        const SizedBox(
-          width: 13,
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context, project);
-          },
-          child: Text(
-            project.name,
-            style: Theme.of(context).textTheme.headline4,
+          Container(
+            width: 15.0,
+            height: 15.0,
+            decoration: BoxDecoration(
+              color: project.color,
+              shape: BoxShape.circle,
+            ),
           ),
-        ),
-        const Spacer(),
-        const Icon(Icons.more_vert)
-      ],
+          const SizedBox(
+            width: 13,
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, project);
+            },
+            child: Text(
+              project.name,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ),
+          const Spacer(),
+          const Icon(Icons.more_vert)
+        ],
+      ),
     );
   }
 
@@ -70,49 +81,47 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 3.0, 0.0, 0.0),
-        child: ListView(
-          children: [
-            Card(
-              color: Theme.of(context).colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                  child: TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          textController.clear();
-                        },
-                      ),
+      body: ListView(
+        children: [
+          //TODO: separete search bar into its own widget
+          Card(
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.0),
+            ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                child: TextField(
+                  controller: textController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        textController.clear();
+                      },
                     ),
                   ),
                 ),
               ),
             ),
-            StreamBuilder<ProjectSelectorState>(
-                stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<ProjectSelectorState> snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView(
-                      shrinkWrap: true,
-                      children:
-                          projectsToWidgets(context, snapshot.data!.projects),
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                }),
-          ],
-        ),
+          ),
+          StreamBuilder<ProjectSelectorState>(
+              stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<ProjectSelectorState> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView(
+                    shrinkWrap: true,
+                    children:
+                        projectsToWidgets(context, snapshot.data!.projects),
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              }),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -123,6 +132,11 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
               name: textController.text,
               //TODO: get colours from user
               color: const Color.fromARGB(255, 255, 0, 0)));
+
+          FocusScopeNode currentScope = FocusScope.of(context);
+          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+            FocusManager.instance.primaryFocus!.unfocus();
+          }
           textController.clear();
         },
         child: const Icon(Icons.add),

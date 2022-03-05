@@ -38,8 +38,7 @@ class TimeLog {
   }
 
   Future<Activity?> fetchActivity() async {
-    ActivityTable table = ActivityTable.getTable();
-    return table.getActivityById(activityId);
+    return DBProvider.db.getActivityById(activityId);
   }
 }
 
@@ -72,19 +71,19 @@ class TimeLogTable {
 
   void ediTimeLog(int id, DateTime start, DateTime end, int activityId) {
     TimeLog selectedTimeLog = _timeLogs[id];
-    ActivityTable activities = ActivityTable.getTable();
-    Activity currentActivity =
-        activities.getActivityById(selectedTimeLog.activityId);
-    currentActivity.addTime(selectedTimeLog.time * (-1));
+    //ActivityTable activities = ActivityTable.getTable();
+    //Activity currentActivity =
+    //    activities.getActivityById(selectedTimeLog.activityId);
+    //currentActivity.addTime(selectedTimeLog.time * (-1));
 
     selectedTimeLog.start = start;
     selectedTimeLog.end = end;
     selectedTimeLog.time = end.difference(start);
     selectedTimeLog.activityId = activityId;
 
-    Activity newActivity =
-        activities.getActivityById(selectedTimeLog.activityId);
-    newActivity.addTime(selectedTimeLog.time);
+    //Activity newActivity =
+    //activities.getActivityById(selectedTimeLog.activityId);
+    //newActivity.addTime(selectedTimeLog.time);
 
     _timeLogs[id] = selectedTimeLog;
   }

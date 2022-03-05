@@ -1,6 +1,6 @@
 part of 'project_selector_bloc.dart';
 
-//TODO use equitable for states and events
+//TODO: use equitable for states and events
 class ProjectSelectorState {
   List<Project> projects;
   ProjectSelectorState({this.projects = const []});
@@ -14,7 +14,10 @@ class NewItem extends ProjectSelectorEvent {
   NewItem({required this.name, required this.color});
 }
 
-class DeleteItem extends ProjectSelectorEvent {}
+class DeleteItem extends ProjectSelectorEvent {
+  int id;
+  DeleteItem({required this.id});
+}
 
 class SyncToDB extends ProjectSelectorEvent {
   List<Project> projects;

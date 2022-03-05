@@ -27,18 +27,27 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
   final textController = TextEditingController();
 
   Widget itemTemplate(BuildContext context, Activity activity) {
-    return MaterialButton(
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        Navigator.pop(context, activity);
+    return Dismissible(
+      key: UniqueKey(),
+      background: Container(
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1)),
+      onDismissed: (DismissDirection direction) {
+        BlocProvider.of<ActivitySelectorBloc>(context)
+            .add(DeleteItem(id: activity.id));
       },
-      child: Row(
-        children: [
-          Text(
-            activity.name,
-            style: Theme.of(context).textTheme.headline4,
-          ),
-        ],
+      child: MaterialButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          Navigator.pop(context, activity);
+        },
+        child: Row(
+          children: [
+            Text(
+              activity.name,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -62,43 +71,57 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 3.0, 0.0, 0.0),
-        child: BlocBuilder<ActivitySelectorBloc, ActivitySelectorState>(
-            //specify buildWhen for better performance
-            builder: (context, state) {
-          return ListView(
-            children: [
-              Card(
-                color: Theme.of(context).colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                    child: TextField(
-                      controller: textController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            textController.clear();
-                          },
-                        ),
+        child: ListView(
+          children: [
+            //TODO: separete search bar into its own widget
+            Card(
+              color: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                  child: TextField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          textController.clear();
+                        },
                       ),
                     ),
                   ),
                 ),
               ),
-              ...activitiesToWidgets(context, state.getActivities()),
-            ],
-          );
-        }),
+            ),
+            StreamBuilder(
+                stream: BlocProvider.of<ActivitySelectorBloc>(context).stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<ActivitySelectorState> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView(
+                      shrinkWrap: true,
+                      children: activitiesToWidgets(
+                          context, snapshot.data!.activities),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                })
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           BlocProvider.of<ActivitySelectorBloc>(context)
               .add(NewItem(name: textController.text));
+          FocusScopeNode currentScope = FocusScope.of(context);
+          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+            FocusManager.instance.primaryFocus!.unfocus();
+          }
           textController.clear();
         },
         child: const Icon(Icons.add),
