@@ -1,28 +1,21 @@
-//import 'package:time_tracker/src/data/sql_table.dart';
 //import 'package:sqflite/sqflite.dart';
-
-// ignore_for_file: unused_field
-
 import 'package:time_tracker/src/data/activity_model.dart';
 import 'package:time_tracker/src/data/project_model.dart';
+import 'package:time_tracker/src/data/sql_handler.dart';
 
 class TimeLog {
-  final int _id;
-  DateTime _start; //stored as milliseconds since epoch
-  DateTime _end; //stored as milliseconds since epoch
-  Duration _time; //stored as seconds
-  int _activityId;
+  int id;
+  DateTime start; //stored as milliseconds since epoch
+  DateTime end; //stored as milliseconds since epoch
+  Duration time; //stored as seconds
+  int activityId;
 
   TimeLog(
-      {required int id,
-      required DateTime start,
-      required DateTime end,
-      required int activityId})
-      : _id = id,
-        _start = start,
-        _end = end,
-        _time = end.difference(start),
-        _activityId = activityId;
+      {required this.id,
+      required this.start,
+      required this.end,
+      required this.activityId})
+      : time = end.difference(start);
 
   factory TimeLog.fromMap(Map<String, dynamic> map) => TimeLog(
       id: map["id"],
@@ -31,33 +24,22 @@ class TimeLog {
       activityId: map["activity_id"]);
 
   Map<String, dynamic> toMap() => {
-        "id": _id,
-        "start": _start.millisecondsSinceEpoch,
-        "end": _end.millisecondsSinceEpoch,
-        "activity_id": _activityId
+        "id": id,
+        "start": start.millisecondsSinceEpoch,
+        "end": end.millisecondsSinceEpoch,
+        "activity_id": activityId
       };
 
-  Duration get time {
-    return _time;
+  Future<Project?> fetchProject() async {
+    //TODO: evaluate possible error
+    Activity activity = (await fetchActivity())!;
+
+    return DBProvider.db.getProjectById(activity.projectId);
   }
 
-  DateTime get start {
-    return _start;
-  }
-
-  DateTime get end {
-    return _end;
-  }
-
-  Project get project {
-    ProjectTable table = ProjectTable.getTable();
-
-    return table.getProjectById(activity.projectId);
-  }
-
-  Activity get activity {
+  Future<Activity?> fetchActivity() async {
     ActivityTable table = ActivityTable.getTable();
-    return table.getActivityById(_activityId);
+    return table.getActivityById(activityId);
   }
 }
 
@@ -84,7 +66,7 @@ class TimeLogTable {
 
   List<TimeLog> getTimeLogsOfActivity(int activityId) {
     return _timeLogs
-        .where((element) => element._activityId == activityId)
+        .where((element) => element.activityId == activityId)
         .toList();
   }
 
@@ -92,17 +74,17 @@ class TimeLogTable {
     TimeLog selectedTimeLog = _timeLogs[id];
     ActivityTable activities = ActivityTable.getTable();
     Activity currentActivity =
-        activities.getActivityById(selectedTimeLog._activityId);
-    currentActivity.addTime(selectedTimeLog._time * (-1));
+        activities.getActivityById(selectedTimeLog.activityId);
+    currentActivity.addTime(selectedTimeLog.time * (-1));
 
-    selectedTimeLog._start = start;
-    selectedTimeLog._end = end;
-    selectedTimeLog._time = end.difference(start);
-    selectedTimeLog._activityId = activityId;
+    selectedTimeLog.start = start;
+    selectedTimeLog.end = end;
+    selectedTimeLog.time = end.difference(start);
+    selectedTimeLog.activityId = activityId;
 
     Activity newActivity =
-        activities.getActivityById(selectedTimeLog._activityId);
-    newActivity.addTime(selectedTimeLog._time);
+        activities.getActivityById(selectedTimeLog.activityId);
+    newActivity.addTime(selectedTimeLog.time);
 
     _timeLogs[id] = selectedTimeLog;
   }

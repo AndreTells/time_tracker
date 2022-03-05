@@ -147,10 +147,11 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => {
-          Navigator.push(
+          /*Navigator.push(
               context,
               PageRouteBuilder(
                   pageBuilder: (_, __, ___) => const TimeLogListPage()))
+        */
         },
         child: const Icon(Icons.format_list_bulleted),
       ),

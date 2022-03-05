@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/project_selector_bloc/project_selector_bloc.dart';
 import 'package:time_tracker/src/data/project_model.dart';
+import 'package:time_tracker/src/data/sql_handler.dart';
 
 class ProjectSelectorPage extends StatelessWidget {
   const ProjectSelectorPage({Key? key}) : super(key: key);
@@ -71,38 +72,47 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(8.0, 3.0, 0.0, 0.0),
-        child: BlocBuilder<ProjectSelectorBloc, ProjectSelectorState>(
-            //specify buildWhen for better performance
-            builder: (context, state) {
-          return ListView(
-            children: [
-              Card(
-                color: Theme.of(context).colorScheme.surface,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                    child: TextField(
-                      controller: textController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            textController.clear();
-                          },
-                        ),
+        child: ListView(
+          children: [
+            Card(
+              color: Theme.of(context).colorScheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
+                  child: TextField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          textController.clear();
+                        },
                       ),
                     ),
                   ),
                 ),
               ),
-              ...projectsToWidgets(context, state.getProjects()),
-            ],
-          );
-        }),
+            ),
+            StreamBuilder<ProjectSelectorState>(
+                stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<ProjectSelectorState> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView(
+                      shrinkWrap: true,
+                      children:
+                          projectsToWidgets(context, snapshot.data!.projects),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                }),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

@@ -2,19 +2,15 @@
 //import 'package:sqflite/sqflite.dart';
 
 class Activity {
-  final int _id;
-  String _name;
-  Duration _totalTime; //stored as seconds
-  int _projectId;
+  int id;
+  String name;
+  Duration totalTime; //stored as seconds
+  int projectId;
   Activity(
-      {required int id,
-      required String name,
-      required Duration totalTime,
-      required int projectId})
-      : _id = id,
-        _name = name,
-        _totalTime = totalTime,
-        _projectId = projectId;
+      {required this.id,
+      required this.name,
+      required this.totalTime,
+      required this.projectId});
 
   factory Activity.fromMap(Map<String, dynamic> map) => Activity(
       id: map["id"],
@@ -23,30 +19,14 @@ class Activity {
       projectId: map["project_id"]);
 
   Map<String, dynamic> toMap() => {
-        "id": _id,
-        "name": _name,
-        "total_time": _totalTime.inSeconds,
-        "project_id": _projectId
+        "id": id,
+        "name": name,
+        "total_time": totalTime.inSeconds,
+        "project_id": projectId
       };
 
-  String get name {
-    return _name;
-  }
-
-  Duration get totalTime {
-    return _totalTime;
-  }
-
-  int get projectId {
-    return _projectId;
-  }
-
-  int get id {
-    return _id;
-  }
-
   void addTime(Duration time) {
-    _totalTime += time;
+    totalTime += time;
   }
 
   static bool identical(Activity? activity1, Activity? activity2) {
@@ -55,7 +35,7 @@ class Activity {
     } else if ((activity1 != null && activity2 == null) ||
         (activity1 == null && activity2 != null)) {
       return false;
-    } else if (activity1!._id == activity2!._id) {
+    } else if (activity1!.id == activity2!.id) {
       return true;
     }
     return false;
@@ -88,13 +68,13 @@ class ActivityTable {
 
   List<Activity> getActivitiesOfProject(int projectId) {
     return _activities
-        .where((element) => element._projectId == projectId)
+        .where((element) => element.projectId == projectId)
         .toList();
   }
 
   void editActivity(int id, String name, int projectId) {
-    _activities[id]._name = name;
-    _activities[id]._projectId = projectId;
+    _activities[id].name = name;
+    _activities[id].projectId = projectId;
   }
 
   Activity getActivityById(int id) {
