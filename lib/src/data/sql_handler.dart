@@ -167,7 +167,7 @@ class DBProvider {
     final db = await database;
     List<TimeLog> timeLogs = await getTimeLogsFromActivity(id);
     for (TimeLog t in timeLogs) {
-      deleteActivity(t.id);
+      deleteTimeLog(t.id);
     }
     db.delete("Activity", where: "id = ?", whereArgs: [id]);
   }
