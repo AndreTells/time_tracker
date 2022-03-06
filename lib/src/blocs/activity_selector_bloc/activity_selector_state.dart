@@ -1,6 +1,6 @@
 part of 'activity_selector_bloc.dart';
 
-//TODO: use equitable for states and events
+//TODO: use equatable for states and events
 class ActivitySelectorState {
   List<Activity> activities;
   int projectId;

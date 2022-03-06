@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/activity_selector_bloc/activity_selector_bloc.dart';
+import 'package:time_tracker/src/components/text_field.dart';
 import 'package:time_tracker/src/data/activity_model.dart';
 
 class ActivitySelectorPage extends StatelessWidget {
@@ -73,30 +74,7 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
         padding: const EdgeInsets.fromLTRB(8.0, 3.0, 0.0, 0.0),
         child: ListView(
           children: [
-            //TODO: separete search bar into its own widget
-            Card(
-              color: Theme.of(context).colorScheme.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.0),
-              ),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                  child: TextField(
-                    controller: textController,
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          textController.clear();
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            CustomTextField(textController: textController),
             StreamBuilder(
                 stream: BlocProvider.of<ActivitySelectorBloc>(context).stream,
                 builder: (BuildContext context,

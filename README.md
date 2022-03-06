@@ -9,3 +9,4 @@ an app to track time spent working on activities from projects
 - style time_log_list_page
 - rename time_log_list_page to something more intuitive
 - change to online database (maybe with 'database per service pattern'??)
+- create unit tests for project

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/project_selector_bloc/project_selector_bloc.dart';
+import 'package:time_tracker/src/components/text_field.dart';
 import 'package:time_tracker/src/data/project_model.dart';
 
 class ProjectSelectorPage extends StatelessWidget {
@@ -83,30 +84,7 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: ListView(
         children: [
-          //TODO: separete search bar into its own widget
-          Card(
-            color: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
-            ),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 0, 0, 0),
-                child: TextField(
-                  controller: textController,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        textController.clear();
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          CustomTextField(textController: textController),
           StreamBuilder<ProjectSelectorState>(
               stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
               builder: (BuildContext context,
