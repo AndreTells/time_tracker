@@ -37,11 +37,11 @@ class HomeState {
 abstract class HomeEvent {}
 
 class SetProject extends HomeEvent {
-  final Project project;
+  final Project? project;
   SetProject({required this.project});
 }
 
 class SetActivity extends HomeEvent {
-  final Activity activity;
+  final Activity? activity;
   SetActivity({required this.activity});
 }

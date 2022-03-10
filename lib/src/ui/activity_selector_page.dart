@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/activity_selector_bloc/activity_selector_bloc.dart';
+import 'package:time_tracker/src/components/flap.dart';
 import 'package:time_tracker/src/components/text_field.dart';
 import 'package:time_tracker/src/data/activity_model.dart';
 
@@ -43,6 +44,9 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
         },
         child: Row(
           children: [
+            const SizedBox(
+              width: 8.0,
+            ),
             Text(
               activity.name,
               style: Theme.of(context).textTheme.headline4,
@@ -68,12 +72,15 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(8.0, 3.0, 0.0, 0.0),
-        child: ListView(
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.vertical,
+      onDismissed: (direction) => Navigator.of(context).pop(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Column(
           children: [
+            Flap(),
             CustomTextField(textController: textController),
             StreamBuilder(
                 stream: BlocProvider.of<ActivitySelectorBloc>(context).stream,
@@ -91,20 +98,20 @@ class _ActivitySelectorPageViewState extends State<_ActivitySelectorView> {
                 })
           ],
         ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            BlocProvider.of<ActivitySelectorBloc>(context)
+                .add(NewItem(name: textController.text));
+            FocusScopeNode currentScope = FocusScope.of(context);
+            if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+              FocusManager.instance.primaryFocus!.unfocus();
+            }
+            textController.clear();
+          },
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          BlocProvider.of<ActivitySelectorBloc>(context)
-              .add(NewItem(name: textController.text));
-          FocusScopeNode currentScope = FocusScope.of(context);
-          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-            FocusManager.instance.primaryFocus!.unfocus();
-          }
-          textController.clear();
-        },
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

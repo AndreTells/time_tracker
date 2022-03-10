@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
                       child: Center(
                           child: TextButton(
                         onPressed: () async {
-                          final Project project = await Navigator.push(
+                          final Project? project = await Navigator.push(
                               context,
                               PageRouteBuilder(
                                   pageBuilder: (_, __, ___) =>
@@ -116,7 +116,7 @@ class HomePage extends StatelessWidget {
                         onPressed: () async {
                           try {
                             state.validateProject();
-                            final Activity activity = await Navigator.push(
+                            final Activity? activity = await Navigator.push(
                                 context,
                                 PageRouteBuilder(
                                     pageBuilder: (_, __, ___) =>

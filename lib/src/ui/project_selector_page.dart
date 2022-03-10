@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:time_tracker/src/blocs/project_selector_bloc/project_selector_bloc.dart';
 import 'package:time_tracker/src/components/text_field.dart';
 import 'package:time_tracker/src/data/project_model.dart';
+import 'package:time_tracker/src/components/flap.dart';
 
 class ProjectSelectorPage extends StatelessWidget {
   const ProjectSelectorPage({Key? key}) : super(key: key);
@@ -80,46 +81,52 @@ class _ProjectSelectorPageViewState extends State<_ProjectSelectorView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: ListView(
-        children: [
-          CustomTextField(textController: textController),
-          StreamBuilder<ProjectSelectorState>(
-              stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
-              builder: (BuildContext context,
-                  AsyncSnapshot<ProjectSelectorState> snapshot) {
-                if (snapshot.hasData) {
-                  return ListView(
-                    shrinkWrap: true,
-                    children:
-                        projectsToWidgets(context, snapshot.data!.projects),
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              }),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (textController.text.isEmpty) {
-            return;
-          }
-          BlocProvider.of<ProjectSelectorBloc>(context).add(NewItem(
-              name: textController.text,
-              //TODO: get colours from user
-              color: const Color.fromARGB(255, 255, 0, 0)));
+    return Dismissible(
+      key: UniqueKey(),
+      direction: DismissDirection.vertical,
+      onDismissed: (_) => Navigator.of(context).pop(),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        body: Column(
+          children: [
+            Flap(),
+            CustomTextField(textController: textController),
+            StreamBuilder<ProjectSelectorState>(
+                stream: BlocProvider.of<ProjectSelectorBloc>(context).stream,
+                builder: (BuildContext context,
+                    AsyncSnapshot<ProjectSelectorState> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView(
+                      shrinkWrap: true,
+                      children:
+                          projectsToWidgets(context, snapshot.data!.projects),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                }),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            if (textController.text.isEmpty) {
+              return;
+            }
+            BlocProvider.of<ProjectSelectorBloc>(context).add(NewItem(
+                name: textController.text,
+                //TODO: get colours from user
+                color: const Color.fromARGB(255, 255, 0, 0)));
 
-          FocusScopeNode currentScope = FocusScope.of(context);
-          if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-            FocusManager.instance.primaryFocus!.unfocus();
-          }
-          textController.clear();
-        },
-        child: const Icon(Icons.add),
+            FocusScopeNode currentScope = FocusScope.of(context);
+            if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+              FocusManager.instance.primaryFocus!.unfocus();
+            }
+            textController.clear();
+          },
+          child: const Icon(Icons.add),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

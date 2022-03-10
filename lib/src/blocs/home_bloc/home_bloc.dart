@@ -12,17 +12,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (event is SetProject) {
       if (state.selectedProject == null) {
         yield HomeState(selectedProject: event.project, selectedActivity: null);
-      }
-      if (state.selectedProject!.id == event.project.id) {
+      } else if (event.project == null) {
         yield HomeState(
             selectedProject: state.selectedProject,
             selectedActivity: state.selectedActivity);
+      } else if (state.selectedProject!.id == event.project!.id) {
+        yield HomeState(
+            selectedProject: state.selectedProject,
+            selectedActivity: state.selectedActivity);
+      } else {
+        yield HomeState(selectedProject: event.project, selectedActivity: null);
       }
-      yield HomeState(selectedProject: event.project, selectedActivity: null);
     } else if (event is SetActivity) {
-      yield HomeState(
-          selectedProject: state.selectedProject,
-          selectedActivity: event.activity);
+      if (event.activity == null) {
+        yield HomeState(
+            selectedProject: state.selectedProject,
+            selectedActivity: state.selectedActivity);
+      } else {
+        yield HomeState(
+            selectedProject: state.selectedProject,
+            selectedActivity: event.activity);
+      }
     }
   }
 }
